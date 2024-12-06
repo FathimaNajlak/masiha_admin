@@ -17,8 +17,8 @@ class Education {
     return {
       'degree': degree,
       'institution': institution,
-      'yearOfCompletion': yearOfCompletion,
       'certificatePath': certificatePath,
+      'yearOfCompletion': yearOfCompletion,
     };
   }
 }
