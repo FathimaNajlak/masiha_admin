@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:masiha_admin/business_logic/registration/auth_bloc.dart';
 import 'package:masiha_admin/business_logic/registration/auth_states.dart';
 import 'package:masiha_admin/presentation/screens/registration/registeration.dart';
-import 'package:masiha_admin/presentation/screens/home.dart';
+import 'package:masiha_admin/presentation/screens/admin_panel.dart';
 import 'package:masiha_admin/services/firebase_auth_service.dart';
 
 void main() async {
@@ -36,6 +36,9 @@ class MyApp extends StatelessWidget {
         ),
       )),
       child: MaterialApp(
+        routes: {
+          '/registration': (context) => const RegisterationScreen(),
+        },
         debugShowCheckedModeBanner: false,
         title: 'Firebase Login',
         theme: ThemeData(
@@ -44,7 +47,7 @@ class MyApp extends StatelessWidget {
         home: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is AuthAuthenticatedState) {
-              return const Home(); // Navigate to home screen when authenticated
+              return const AdminPanel(); // Navigate to home screen when authenticated
             }
             return const RegisterationScreen();
           },

@@ -1,10 +1,18 @@
-part of 'request_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:masiha_admin/model/request.dart';
 
-sealed class RequestState extends Equatable {
-  const RequestState();
+class RequestState extends Equatable {
+  final List<Request> pendingRequests;
+  final List<Request> approvedRequests;
+  final List<Request> declinedRequests;
+
+  const RequestState({
+    required this.pendingRequests,
+    required this.approvedRequests,
+    required this.declinedRequests,
+  });
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props =>
+      [pendingRequests, approvedRequests, declinedRequests];
 }
-
-final class RequestInitial extends RequestState {}
