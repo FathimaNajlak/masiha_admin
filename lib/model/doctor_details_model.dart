@@ -49,12 +49,12 @@ class DoctorDetailsModel {
   String? email;
   String? gender;
   String? hospitalName;
-  String? specialization;
+  String? specialty;
   int? yearOfExperience;
-  List<String>? availableDays;
-  DateTime? workingTimeStart;
-  DateTime? workingTimeEnd;
-  double? consultationFees;
+  // List<String>? availableDays;
+  // DateTime? workingTimeStart;
+  // DateTime? workingTimeEnd;
+  // double? consultationFees;
   String? imagePath;
   List<Education>? educations;
   String? requestId;
@@ -67,12 +67,12 @@ class DoctorDetailsModel {
     this.email,
     this.gender,
     this.hospitalName,
-    this.specialization,
+    this.specialty,
     this.yearOfExperience,
-    this.availableDays,
-    this.workingTimeStart,
-    this.workingTimeEnd,
-    this.consultationFees,
+    // this.availableDays,
+    // this.workingTimeStart,
+    // this.workingTimeEnd,
+    // this.consultationFees,
     this.imagePath,
     this.educations,
   });
@@ -85,12 +85,12 @@ class DoctorDetailsModel {
       'email': email,
       'gender': gender,
       'hospitalName': hospitalName,
-      'specialization': specialization,
+      'specialty': specialty,
       'yearOfExperience': yearOfExperience,
-      'availableDays': availableDays,
-      'workingTimeStart': workingTimeStart?.toIso8601String(),
-      'workingTimeEnd': workingTimeEnd?.toIso8601String(),
-      'consultationFees': consultationFees,
+      // 'availableDays': availableDays,
+      // 'workingTimeStart': workingTimeStart?.toIso8601String(),
+      // 'workingTimeEnd': workingTimeEnd?.toIso8601String(),
+      // 'consultationFees': consultationFees,
       'imagePath': imagePath,
       'educations': educations?.map((e) => e.toJson()).toList(),
       'requestId': requestId,
@@ -108,18 +108,18 @@ class DoctorDetailsModel {
       email: json['email'],
       gender: json['gender'],
       hospitalName: json['hospitalName'],
-      specialization: json['specialization'],
+      specialty: json['specialty'],
       yearOfExperience: json['yearOfExperience'],
-      availableDays: json['availableDays'] != null
-          ? List<String>.from(json['availableDays'])
-          : null,
-      workingTimeStart: json['workingTimeStart'] != null
-          ? DateTime.parse(json['workingTimeStart'])
-          : null,
-      workingTimeEnd: json['workingTimeEnd'] != null
-          ? DateTime.parse(json['workingTimeEnd'])
-          : null,
-      consultationFees: json['consultationFees'],
+      // availableDays: json['availableDays'] != null
+      //     ? List<String>.from(json['availableDays'])
+      //     : null,
+      // workingTimeStart: json['workingTimeStart'] != null
+      //     ? DateTime.parse(json['workingTimeStart'])
+      //     : null,
+      // workingTimeEnd: json['workingTimeEnd'] != null
+      //     ? DateTime.parse(json['workingTimeEnd'])
+      //     : null,
+      // consultationFees: json['consultationFees'],
       imagePath: json['imagePath'],
       educations: json['educations'] != null
           ? (json['educations'] as List)
