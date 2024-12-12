@@ -7,6 +7,7 @@ import 'package:masiha_admin/business_logic/doctorRequest/bloc/doctor_requests_s
 import 'package:masiha_admin/model/doctor_details_model.dart';
 import 'package:masiha_admin/presentation/widgets/doctor_request_card.dart';
 import 'package:masiha_admin/utils/consts/colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PendingRequestsPage extends StatefulWidget {
   const PendingRequestsPage({super.key});
@@ -80,7 +81,6 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
               borderRadius: BorderRadius.circular(20),
               child: Stack(
                 children: [
-                  // Decorative background elements
                   Positioned(
                     top: -50,
                     right: -50,
@@ -93,12 +93,10 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
                       ),
                     ),
                   ),
-
                   SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Header with profile image
                         Container(
                           color:
                               Theme.of(context).primaryColor.withOpacity(0.1),
@@ -106,22 +104,10 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
                           child: Column(
                             children: [
                               if (request.imagePath != null)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 5),
-                                      ),
-                                    ],
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 60,
-                                    backgroundImage: CachedNetworkImageProvider(
-                                      request.imagePath!,
-                                    ),
+                                CircleAvatar(
+                                  radius: 60,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    request.imagePath!,
                                   ),
                                 ),
                               const SizedBox(height: 16),
@@ -146,53 +132,40 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
                             ],
                           ),
                         ),
-
-                        // Content sections
                         Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildSection(
-                                'Personal Information',
-                                [
-                                  _buildInfoTile(
-                                      Icons.email, 'Email', request.email),
-                                  _buildInfoTile(
-                                      Icons.person, 'Gender', request.gender),
-                                  _buildInfoTile(Icons.cake, 'Age',
-                                      request.age?.toString()),
-                                  _buildInfoTile(
-                                    Icons.calendar_today,
-                                    'Date of Birth',
-                                    request.dateOfBirth != null
-                                        ? request.dateOfBirth!
-                                            .toLocal()
-                                            .toString()
-                                            .split(' ')[0]
-                                        : null,
-                                  ),
-                                ],
-                              ),
+                              _buildSection('Personal Information', [
+                                _buildInfoTile(
+                                    Icons.email, 'Email', request.email),
+                                _buildInfoTile(
+                                    Icons.person, 'Gender', request.gender),
+                                _buildInfoTile(
+                                    Icons.cake, 'Age', request.age?.toString()),
+                                _buildInfoTile(
+                                  Icons.calendar_today,
+                                  'Date of Birth',
+                                  request.dateOfBirth
+                                      ?.toLocal()
+                                      .toString()
+                                      .split(' ')[0],
+                                ),
+                              ]),
                               const SizedBox(height: 24),
-                              _buildSection(
-                                'Professional Information',
-                                [
-                                  _buildInfoTile(Icons.local_hospital,
-                                      'Hospital', request.hospitalName),
-                                  _buildInfoTile(
-                                      Icons.work,
-                                      'Years of Experience',
-                                      request.yearOfExperience?.toString()),
-                                ],
-                              ),
+                              _buildSection('Professional Information', [
+                                _buildInfoTile(Icons.local_hospital, 'Hospital',
+                                    request.hospitalName),
+                                _buildInfoTile(Icons.work, 'Experience',
+                                    '${request.yearOfExperience ?? 'N/A'} years'),
+                              ]),
                               const SizedBox(height: 24),
                               _buildSection(
                                 'Education',
-                                request.educations
-                                        ?.map((edu) =>
-                                            _buildEducationCard(edu, context))
-                                        .toList() ??
+                                request.educations?.map((edu) {
+                                      return _buildEducationCard(edu, context);
+                                    }).toList() ??
                                     [
                                       const Text(
                                           'No education details available')
@@ -204,8 +177,6 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
                       ],
                     ),
                   ),
-
-                  // Close button
                   Positioned(
                     top: 8,
                     right: 8,
@@ -320,13 +291,7 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
               ElevatedButton.icon(
                 icon: const Icon(Icons.file_download),
                 label: const Text('View Certificate'),
-                onPressed: () {
-                  // TODO: Implement certificate view/download
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Certificate view not implemented')),
-                  );
-                },
+                onPressed: () => viewCertificate(context, edu.certificatePath),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -335,6 +300,84 @@ class _PendingRequestsPageState extends State<PendingRequestsPage> {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+
+  void viewCertificate(BuildContext context, String? certificatePath) {
+    if (certificatePath == null || certificatePath.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No certificate available')),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.8,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Close button
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              // Certificate image
+              Expanded(
+                child: Center(
+                  child: CachedNetworkImage(
+                    imageUrl: certificatePath,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error, color: Colors.red, size: 48),
+                        const SizedBox(height: 8),
+                        Text('Failed to load certificate: $error'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Download button (optional)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.open_in_new),
+                      label: const Text('Open in Browser'),
+                      onPressed: () async {
+                        try {
+                          final Uri url = Uri.parse(certificatePath);
+                          if (!await launchUrl(url)) {
+                            throw Exception('Could not launch $url');
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error opening URL: $e')),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

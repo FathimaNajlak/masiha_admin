@@ -31,41 +31,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => AuthBloc(FirebaseAuthService(
-            auth: FirebaseAuth.instance,
-            googleSignIn: GoogleSignIn(
-              clientId:
-                  '123369036375-61p5m9o3ekltsnu97o8c68djpfo35m3b.apps.googleusercontent.com',
-            ),
-          )),
-        ),
-        BlocProvider(
-          create: (context) => DoctorRequestsBloc(
-            DoctorRequestsRepository(
-                FirebaseFirestore.instance), // Provide the repository here
-          ), // Add this line
-        ),
-      ],
-      child: MaterialApp(
-        routes: {
-          '/registration': (context) => const RegisterationScreen(),
-        },
-        debugShowCheckedModeBanner: false,
-        title: 'Firebase Login',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state is AuthAuthenticatedState) {
-              return const AdminPanelPage();
-            }
-            return const RegisterationScreen();
-          },
-        ),
-      ),
-    );
+        providers: [
+          BlocProvider(
+            create: (context) => AuthBloc(FirebaseAuthService(
+              auth: FirebaseAuth.instance,
+              googleSignIn: GoogleSignIn(
+                clientId:
+                    '123369036375-61p5m9o3ekltsnu97o8c68djpfo35m3b.apps.googleusercontent.com',
+              ),
+            )),
+          ),
+          BlocProvider(
+            create: (context) => DoctorRequestsBloc(
+              DoctorRequestsRepository(FirebaseFirestore.instance),
+            ), // Add this line
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Firebase Login',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthAuthenticatedState) {
+                return const AdminPanelPage();
+              }
+              return const LoginScreen();
+            },
+          ),
+        ));
   }
 }
